@@ -13,6 +13,9 @@ function NavBar() {
             <div className="text-[#e8f0e5] font-medium cursor-pointer transition-colors duration-300 hover:text-[#99cceb] text-lg">
               About Us
             </div>
+            <div className="text-[#e8f0e5] font-medium cursor-pointer transition-colors duration-300 hover:text-[#99cceb] text-lg">
+              login
+            </div>
           </div>
         </nav>
       </div>
