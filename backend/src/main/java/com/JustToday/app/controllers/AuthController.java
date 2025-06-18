@@ -4,22 +4,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.JustToday.app.repositories.UserRepository;
+import com.JustToday.app.constants.ApiEndPoints;
 
+import com.JustToday.app.entities.User;
 import com.JustToday.app.dto.login.LoginRequest;
 import com.JustToday.app.dto.login.LoginResponse;
 import com.JustToday.app.dto.signup.SignupRequest;
 import com.JustToday.app.dto.signup.SignupResponse;
-import com.JustToday.app.entities.User;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(ApiEndPoints.AUTH_BASE)
 @CrossOrigin(origins = "${app.cors.allowed-origin}")
 public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/login")
+    @PostMapping(ApiEndPoints.AUTH_LOGIN)
+    @ResponseBody
+    /*
+     * Handles user login by checking the provided email and password.
+     * If the user exists and the password matches, it returns a success response with user details.
+     */
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         User user = new User();
         user.setEmail(loginRequest.getEmail());
@@ -44,7 +50,12 @@ public class AuthController {
         return new LoginResponse("An unexpected error occurred", null, null, null);
     }
 
-    @PostMapping("/signup")
+    @PostMapping(ApiEndPoints.AUTH_SIGNUP)
+    @ResponseBody
+    /*
+     * Handles user signup by checking if the user already exists.
+     * If not, it creates a new user and returns a success response with user details.
+     */
     public SignupResponse signup(@RequestBody SignupRequest signupRequest) {
         // Check if the user already exists
         User existingUser = userRepository.findByEmail(signupRequest.getEmail());

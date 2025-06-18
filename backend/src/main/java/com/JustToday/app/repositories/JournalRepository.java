@@ -1,0 +1,15 @@
+package com.JustToday.app.repositories;
+
+import java.time.LocalDate;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.JustToday.app.entities.Journal;
+import com.JustToday.app.entities.User;
+
+public interface JournalRepository extends JpaRepository<Journal, String> {
+
+    Journal findByUserAndJournalDate(User user, LocalDate journalDate);
+    // This interface will automatically provide CRUD operations for Journal entities
+    // No additional methods are needed unless custom queries are required
+    
+}

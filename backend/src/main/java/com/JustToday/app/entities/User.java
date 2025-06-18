@@ -3,9 +3,11 @@ package com.JustToday.app.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /** User class having all the user data and all the getters and setters to that data */
 @Entity
+@Table(name = "user")
 public class User {
     @Id
     private String userId = java.util.UUID.randomUUID().toString();
