@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 interface User {
   userId: string;
@@ -45,7 +45,7 @@ function NavBar() {
                 <span className="text-[#1c4e80] font-bold text-lg">J</span>
               </div>
               <h1 className="text-[#e8f0e5] font-bold text-xl tracking-tight">
-                JustToday
+                Riseon
               </h1>
             </a>
           </div>
