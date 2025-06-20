@@ -22,7 +22,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())           //While using postman locally, we have to disable it
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/signup",
-                                    "api/auth/login").permitAll() // 👈 allowing signup requests
+                                    "/api/auth/login",
+                                    "/api/user/updateuser",
+                                    "/api/diaryentry/add").permitAll() // 👈 allowing signup requests
                 .anyRequest().permitAll() // 👈 secure everything else by using authenticated()
             );
         return http.build();

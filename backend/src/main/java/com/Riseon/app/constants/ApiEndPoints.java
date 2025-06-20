@@ -11,12 +11,13 @@ public class ApiEndPoints {
 
     // User endpoints
     public static final String USER_BASE = BASE_URL + "/user";
-    public static final String USER_FETCH_BY_ID = "/getbyid";
-    // public static final String USER_UPDATE = "/update";
+    public static final String USER_FETCH = "/getuser";
+    public static final String USER_UPDATE = "/updateuser";
 
-    // Journal endpoints
-    public static final String JOURNAL_BASE = BASE_URL + "/journal";
-    public static final String JOURNAL_ADD_EDIT = "/addeditentry";
-    public static final String GET_JOURNAL = "/getentry";
-
+    // Diary endpoints
+    public static final String DIARY_BASE = BASE_URL + "/diaryentry";
+    public static final String DIARY_ADD = "/add";
+    public static final String DIARY_FETCH = "/get";
+    public static final String DIARY_UPDATE = "/update";
+    public static final String DIARY_DELETE = "/delete";
 }

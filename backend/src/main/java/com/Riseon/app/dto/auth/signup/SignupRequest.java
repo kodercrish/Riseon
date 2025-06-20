@@ -1,4 +1,4 @@
-package com.Riseon.app.dto.login;
+package com.Riseon.app.dto.auth.signup;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class LoginRequest {
+public class SignupRequest {
+    private String username;
     private String email;
     private String password;
+    private String fullName;
 }

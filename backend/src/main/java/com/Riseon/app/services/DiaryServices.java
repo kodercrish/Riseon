@@ -24,7 +24,7 @@ public class DiaryServices {
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
 
         // checking if diary entry already exists for the user on that date
-        if (diaryEntriesRepository.existsByUserAndDiaryDate(user, LocalDate.parse(diaryDate))) throw new RuntimeException("Diary entry already exists for the user on that date");
+        if(!diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate)).isDeleted()) throw new RuntimeException("Diary entry already exists for the user on that date");
 
         // creating new diary entry
         DiaryEntries diaryEntry = new DiaryEntries();
@@ -43,6 +43,7 @@ public class DiaryServices {
         // null checks
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
         if (!diaryEntriesRepository.existsByUserAndDiaryDate(user, LocalDate.parse(diaryDate))) throw new RuntimeException("Diary entry not found");
+        if(diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate)).isDeleted()) throw new RuntimeException("Diary entry is deleted");
 
         return diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate));
     }
@@ -52,6 +53,7 @@ public class DiaryServices {
         // null checks
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
         if (!diaryEntriesRepository.existsByUserAndDiaryDate(user, LocalDate.parse(diaryDate))) throw new RuntimeException("Diary entry not found");
+        if(diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate)).isDeleted()) throw new RuntimeException("Diary entry is deleted");
 
         // updating diary entry
         DiaryEntries diaryEntry = diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate));
@@ -66,7 +68,7 @@ public class DiaryServices {
     public void deleteDiaryEntry(String user_Id, String diaryDate) {
         // null checks
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
-        if (!diaryEntriesRepository.existsByUserAndDiaryDate(user, LocalDate.parse(diaryDate))) throw new RuntimeException("Diary entry not found");
+        if (diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate)).isDeleted()) throw new RuntimeException("Diary entry not found");
 
         // deleting diary entry - soft delete
         DiaryEntries diaryEntry = diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate));

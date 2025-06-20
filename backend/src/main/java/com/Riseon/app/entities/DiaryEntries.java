@@ -19,7 +19,7 @@ import jakarta.persistence.UniqueConstraint;
 
 /** DiaryEntries class having all the user's diary entry's data */
 @Entity
-@Table(name = "diary_entries", uniqueConstraints = @UniqueConstraint(columnNames = {"user_Id", "diaryDate"}))
+@Table(name = "diary_entries", uniqueConstraints = @UniqueConstraint(columnNames = {"user_Id", "diaryDate", "isDeleted"}))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class DiaryEntries {
     @Id

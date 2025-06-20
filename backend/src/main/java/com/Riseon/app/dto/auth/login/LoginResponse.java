@@ -1,19 +1,14 @@
-package com.Riseon.app.dto.getUserDetails;
+package com.Riseon.app.dto.auth.login;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class GetUserDetailsResponse {
+public class LoginResponse {
     private String message;
-    private String userId;
+    private String user_Id;
     private String username;
     private String email;
-    private String fullName;
-    private LocalDateTime joinedAt;
 }

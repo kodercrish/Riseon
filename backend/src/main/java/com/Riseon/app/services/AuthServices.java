@@ -27,6 +27,7 @@ public class AuthServices {
         if (user != null && check_password(password, user.getPasswordHash())) {
             return user;
         }
+        
         throw new RuntimeException("Invalid Credentials");
     }
     

@@ -1,4 +1,4 @@
-package com.Riseon.app.dto.updateUserDetails;
+package com.Riseon.app.dto.auth.signup;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class UpdateUserDetailsResponse {
+public class SignupResponse {
     private String message;
+    private String user_Id;
+    private String username;
+    private String email;
 }

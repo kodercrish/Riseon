@@ -2,6 +2,9 @@ package com.Riseon.app.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,10 +15,10 @@ import com.Riseon.app.constants.ApiEndPoints;
 
 import com.Riseon.app.entities.Users;
 import com.Riseon.app.services.AuthServices;
-import com.Riseon.app.dto.login.LoginRequest;
-import com.Riseon.app.dto.login.LoginResponse;
-import com.Riseon.app.dto.signup.SignupRequest;
-import com.Riseon.app.dto.signup.SignupResponse;
+import com.Riseon.app.dto.auth.login.LoginRequest;
+import com.Riseon.app.dto.auth.login.LoginResponse;
+import com.Riseon.app.dto.auth.signup.SignupRequest;
+import com.Riseon.app.dto.auth.signup.SignupResponse;
 
 @RestController
 @RequestMapping(ApiEndPoints.AUTH_BASE)
@@ -25,29 +28,37 @@ public class AuthController {
     @Autowired
     private AuthServices authServicesServices;
 
+    /** login user */
     @PostMapping(ApiEndPoints.AUTH_LOGIN)
     @ResponseBody
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         try{
             Users authenticatedUser = authServicesServices.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
-            return new LoginResponse("Login successful", authenticatedUser.getUser_Id(), authenticatedUser.getUsername(), authenticatedUser.getEmail());
+            LoginResponse loginResponse = new LoginResponse("Login successful", authenticatedUser.getUser_Id(), authenticatedUser.getUsername(), authenticatedUser.getEmail());
+            return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
         } catch(RuntimeException e) {
-            return new LoginResponse(e.getMessage(), null, null, null);
+            LoginResponse loginResponse = new LoginResponse(e.getMessage(), null, null, null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
         } catch(Exception e) {
-            return new LoginResponse("Login failed", null, null, null);
+            LoginResponse loginResponse = new LoginResponse("Login failed", null, null, null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(loginResponse);
         }
     }
 
+    /** Creates a new user */
     @PostMapping(ApiEndPoints.AUTH_SIGNUP)
     @ResponseBody
-    public SignupResponse signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest signupRequest) {
         try{
             Users newUser = authServicesServices.createUser(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getFullName());
-            return new SignupResponse("Signup successful", newUser.getUser_Id(), newUser.getUsername(), newUser.getEmail());
+            SignupResponse signupResponse = new SignupResponse("Signup successful", newUser.getUser_Id(), newUser.getUsername(), newUser.getEmail());
+            return ResponseEntity.status(HttpStatus.CREATED).body(signupResponse);
         } catch(RuntimeException e) {
-            return new SignupResponse(e.getMessage(), null, null, null);
+            SignupResponse signupResponse = new SignupResponse(e.getMessage(), null, null, null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(signupResponse);
         } catch(Exception e) {
-            return new SignupResponse("Signup failed", null, null, null);
+            SignupResponse signupResponse = new SignupResponse("Signup failed", null, null, null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(signupResponse);
         }
     }
 }
