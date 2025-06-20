@@ -11,7 +11,8 @@ public class ApiEndPoints {
 
     // User endpoints
     public static final String USER_BASE = BASE_URL + "/user";
-    public static final String USER_BY_ID = "/{userId}";
+    public static final String USER_FETCH_BY_ID = "/getbyid";
+    // public static final String USER_UPDATE = "/update";
 
     // Journal endpoints
     public static final String JOURNAL_BASE = BASE_URL + "/journal";
