@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UpdateUserDetailsRequest {
-    private String user_Id;
     private String username;
     private String fullName;
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -17,33 +18,33 @@ public class UserServices implements UserDetailsService {
 
     /** Implementation of UserDetailsService for Spring Security */
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Since your JWT tokens use email, this method receives email as parameter
-        Users user = usersRepository.findByEmail(email);
-        if(user==null) throw new RuntimeException("User not found");
+        Optional<Users> user = usersRepository.findByUsername(username);
+        if(!user.isPresent()) throw new RuntimeException("User not found");
         
         return org.springframework.security.core.userdetails.User.builder()
-            .username(user.getEmail())
-            .password(user.getPasswordHash())
+            .username(user.get().getUsername())
+            .password(user.get().getPasswordHash())
             .build();
     }
 
-    /** Retrieves the user details based on the user id */
-    public Users getUserById(String user_Id) {
-        return usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
+    /** Retrieves the user details based on the username */
+    public Users getUserByUsername(String username) {
+        return usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    /** Updates the user details based on the user id */
-    public String updateUserDetails(String user_Id, String username, String fullName) {
+    /** Updates the user details based on the username */
+    public String updateUserDetails(String username, String newUsername, String fullName) {
         // nulll check
-        Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Check if any other user with the updated username provided already exists
-        Users existingUser = usersRepository.findByUsername(username);
-        if (existingUser != null && !existingUser.getUser_Id().equals(user_Id)) throw new RuntimeException("Username already exists");
+        Optional<Users> existingUser = usersRepository.findByUsername(username);
+        if (existingUser.isPresent() && !existingUser.get().getUsername().equals(newUsername)) throw new RuntimeException("Username already exists");
 
         // Update user details
-        if(!username.isEmpty() && !username.trim().isEmpty()) user.setUsername(username);
+        if(!newUsername.isEmpty() && !newUsername.trim().isEmpty() && !newUsername.equals(username)) user.setUsername(newUsername);
         if(!fullName.isEmpty() && !fullName.trim().isEmpty()) user.setFullName(fullName);
         // Save the updated user details in the database
         usersRepository.save(user);

@@ -1,6 +1,9 @@
 package com.Riseon.app.services;
 
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.Riseon.app.entities.Users;
@@ -53,14 +56,14 @@ public class PlansServices {
         if(!plansRepository.existsByUserAndTitleAndDate(user, title, java.time.LocalDate.parse(date))) throw new RuntimeException("The plan does not exist");
 
         // updating plan
-        Plans plan = plansRepository.findByUserAndTitleAndDate(user, title, java.time.LocalDate.parse(date));
-        if(!title.isEmpty() && !title.trim().isEmpty()) plan.setTitle(title);
-        if(!description.isEmpty() && !description.trim().isEmpty()) plan.setDescription(description);
-        if(deadline.isEmpty()) plan.setIsAllDay(isAllDay);
-        else plan.setDeadline(java.time.LocalTime.parse(deadline));
+        Optional<Plans> plan = plansRepository.findByUserAndTitleAndDate(user, title, java.time.LocalDate.parse(date));
+        if(!title.isEmpty() && !title.trim().isEmpty()) plan.get().setTitle(title);
+        if(!description.isEmpty() && !description.trim().isEmpty()) plan.get().setDescription(description);
+        if(deadline.isEmpty()) plan.get().setIsAllDay(isAllDay);
+        else plan.get().setDeadline(java.time.LocalTime.parse(deadline));
 
         // saving plan to the database
-        return plansRepository.save(plan);
+        return plansRepository.save(plan.get());
     }
 
     /** Method to delete a plan of a user */
@@ -71,7 +74,7 @@ public class PlansServices {
         if(!plansRepository.existsByUserAndTitleAndDate(user, title, java.time.LocalDate.parse(date))) throw new RuntimeException("The plan does not exist");
 
         // deleting plan
-        plansRepository.delete(plansRepository.findByUserAndTitleAndDate(user, title, java.time.LocalDate.parse(date)));
+        plansRepository.delete(plansRepository.findByUserAndTitleAndDate(user, title, java.time.LocalDate.parse(date)).get());
         return;
     }
 }

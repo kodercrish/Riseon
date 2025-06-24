@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 import com.Riseon.app.entities.ResolutionLogs;
 import com.Riseon.app.entities.Resolutions;
@@ -14,5 +15,5 @@ public interface ResolutionLogsRepository extends JpaRepository<ResolutionLogs, 
     Iterable<ResolutionLogs> findByResolution(Resolutions resolution);
 
     /** Method to find a resolution log by resolution and date */
-    ResolutionLogs findByResolutionAndLogDate(Resolutions resolution, LocalDate localDate);
+    Optional<ResolutionLogs> findByResolutionAndLogDate(Resolutions resolution, LocalDate localDate);
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 import com.Riseon.app.entities.Plans;
 import com.Riseon.app.entities.Users;
@@ -17,5 +18,5 @@ public interface PlansRepository extends JpaRepository<Plans, String> {
     Iterable<Plans> findByUser(Users user);
 
     /** Method to find a plan by user, title and date */
-    Plans findByUserAndTitleAndDate(Users user, String title, LocalDate localDate);
+    Optional<Plans> findByUserAndTitleAndDate(Users user, String title, LocalDate localDate);
 }

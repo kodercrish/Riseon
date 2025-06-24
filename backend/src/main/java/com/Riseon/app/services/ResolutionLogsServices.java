@@ -1,5 +1,7 @@
 package com.Riseon.app.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,8 +72,8 @@ public class ResolutionLogsServices {
         // null checks
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
         Resolutions resolution = resolutionsRepository.findById(resolution_Id).orElseThrow(() -> new RuntimeException("Resolution not found"));
-        ResolutionLogs resolutionLog = resolutionLogsRepository.findByResolutionAndLogDate(resolution, java.time.LocalDate.parse(logDate));
-        if (resolutionLog == null) throw new RuntimeException("Resolution log not found");
+        Optional<ResolutionLogs> resolutionLog = resolutionLogsRepository.findByResolutionAndLogDate(resolution, java.time.LocalDate.parse(logDate));
+        if (!resolutionLog.isPresent()) throw new RuntimeException("Resolution log not found");
         if (!resolution.getUser().equals(user)) throw new RuntimeException("Resolution does not belong to the user");
 
         // Constraints on values in database
@@ -80,10 +82,10 @@ public class ResolutionLogsServices {
         if(Integer.parseInt(followScore)<1 || Integer.parseInt(followScore)>10) throw new RuntimeException("Follow score must be between 1 and 10");
         
         // update values
-        if(followScore != null && !followScore.trim().isEmpty()) resolutionLog.setFollowScore(Integer.parseInt(followScore));
-        if(notes != null && !notes.trim().isEmpty()) resolutionLog.setNotes(notes);
+        if(followScore != null && !followScore.trim().isEmpty()) resolutionLog.get().setFollowScore(Integer.parseInt(followScore));
+        if(notes != null && !notes.trim().isEmpty()) resolutionLog.get().setNotes(notes);
 
-        return resolutionLogsRepository.save(resolutionLog);
+        return resolutionLogsRepository.save(resolutionLog.get());
     }
 
     /** Method to delete a resolution log */
@@ -91,13 +93,13 @@ public class ResolutionLogsServices {
         // null checks
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
         Resolutions resolution = resolutionsRepository.findById(resolution_Id).orElseThrow(() -> new RuntimeException("Resolution not found"));
-        ResolutionLogs resolutionLog = resolutionLogsRepository.findByResolutionAndLogDate(resolution, java.time.LocalDate.parse(logDate));
-        if (resolutionLog == null) throw new RuntimeException("Resolution log not found");
+        Optional<ResolutionLogs> resolutionLog = resolutionLogsRepository.findByResolutionAndLogDate(resolution, java.time.LocalDate.parse(logDate));
+        if (!resolutionLog.isPresent()) throw new RuntimeException("Resolution log not found");
         if (!resolution.getUser().equals(user)) throw new RuntimeException("Resolution does not belong to the user");
         if(java.time.LocalDate.parse(logDate).isAfter(java.time.LocalDate.now())
             || java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDate.parse(logDate), java.time.LocalDate.now()) > 1) throw new RuntimeException("User cannot delete resolution log for this date");
         
         // delete resolution log
-        resolutionLogsRepository.delete(resolutionLog);
+        resolutionLogsRepository.delete(resolutionLog.get());
     }
 }

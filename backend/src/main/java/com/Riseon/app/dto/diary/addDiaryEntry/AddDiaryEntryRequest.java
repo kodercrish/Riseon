@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class AddDiaryEntryRequest {
-    private String user_Id;
     private String title;
     private String content;
     private String diaryDate;

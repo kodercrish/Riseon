@@ -1,5 +1,7 @@
 package com.Riseon.app.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,30 +16,22 @@ public class AuthServices {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //////////////////////////////////////////////////////////
-    /** Helper function to check if the rawpassword entered matches the stored hashed password */
-    public boolean check_password(String rawPassword, String storedHash) {
-        return passwordEncoder.matches(rawPassword, storedHash);
-    }
-    //////////////////////////////////////////////////////////
-
     /** Authenticates a user with provided email and password */
     public Users authenticateUser(String email, String password) {
-        Users user = usersRepository.findByEmail(email);
-        if (user != null && check_password(password, user.getPasswordHash())) {
-            return user;
-        }
+        Optional<Users> user = usersRepository.findByEmail(email);
+        // checks if the rawpassword entered matches the stored hashed password
+        if (user.isPresent() && passwordEncoder.matches(password, user.get().getPasswordHash())) return user.get();
         
         throw new RuntimeException("Invalid Credentials");
     }
-    
+
     /** Checks uniqueness and creates a new user with provided details */
     public Users createUser(String username, String email, String password, String fullName) {
         // null checks
-        Users existingUser = usersRepository.findByEmail(email);
-        if (existingUser != null) throw new RuntimeException("User with this email already exists");
+        Optional<Users> existingUser = usersRepository.findByEmail(email);
+        if (existingUser.isPresent()) throw new RuntimeException("User with this email already exists");
         existingUser = usersRepository.findByUsername(username);
-        if( existingUser != null) throw new RuntimeException("User with this username already exists");
+        if(existingUser.isPresent()) throw new RuntimeException("User with this username already exists");
 
         // Creating a new user
         Users newUser = new Users();

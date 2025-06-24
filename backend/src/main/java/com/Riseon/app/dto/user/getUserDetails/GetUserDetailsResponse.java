@@ -11,9 +11,7 @@ import lombok.AllArgsConstructor;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class GetUserDetailsResponse {
     private String message;
-    private String userId;
     private String username;
-    private String email;
     private String fullName;
     private LocalDateTime joinedAt;
 }

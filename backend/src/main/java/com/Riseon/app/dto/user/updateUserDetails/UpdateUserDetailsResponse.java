@@ -8,4 +8,5 @@ import lombok.AllArgsConstructor;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UpdateUserDetailsResponse {
     private String message;
+    private String newToken;
 }

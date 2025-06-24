@@ -38,15 +38,15 @@ public class AuthController {
         try{
             Users authenticatedUser = authServicesServices.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-            String token = jwtUtil.generateToken(authenticatedUser.getEmail());
+            String responseToken = jwtUtil.generateToken(authenticatedUser.getUser_Id(), authenticatedUser.getUsername());
 
-            LoginResponse loginResponse = new LoginResponse("Login successful", authenticatedUser.getUser_Id(), authenticatedUser.getUsername(), authenticatedUser.getEmail(), token);
+            LoginResponse loginResponse = new LoginResponse("Login successful", responseToken);
             return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
         } catch(RuntimeException e) {
-            LoginResponse loginResponse = new LoginResponse(e.getMessage(), null, null, null, null);
+            LoginResponse loginResponse = new LoginResponse(e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
         } catch(Exception e) {
-            LoginResponse loginResponse = new LoginResponse("Login failed", null, null, null, null);
+            LoginResponse loginResponse = new LoginResponse("Login failed", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(loginResponse);
         }
     }
@@ -58,15 +58,15 @@ public class AuthController {
         try{
             Users newUser = authServicesServices.createUser(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getFullName());
 
-            String token = jwtUtil.generateToken(newUser.getEmail());
+            String responseToken = jwtUtil.generateToken(newUser.getUser_Id(), newUser.getUsername());
 
-            SignupResponse signupResponse = new SignupResponse("Signup successful", newUser.getUser_Id(), newUser.getUsername(), newUser.getEmail(), token);
+            SignupResponse signupResponse = new SignupResponse("Signup successful", responseToken);
             return ResponseEntity.status(HttpStatus.CREATED).body(signupResponse);
         } catch(RuntimeException e) {
-            SignupResponse signupResponse = new SignupResponse(e.getMessage(), null, null, null, null);
+            SignupResponse signupResponse = new SignupResponse(e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(signupResponse);
         } catch(Exception e) {
-            SignupResponse signupResponse = new SignupResponse("Signup failed", null, null, null, null);
+            SignupResponse signupResponse = new SignupResponse("Signup failed", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(signupResponse);
         }
     }

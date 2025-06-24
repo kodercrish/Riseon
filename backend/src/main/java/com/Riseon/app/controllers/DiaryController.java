@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import com.Riseon.app.constants.ApiEndPoints;
 import com.Riseon.app.entities.DiaryEntries;
 import com.Riseon.app.services.DiaryServices;
+import com.Riseon.app.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.Riseon.app.dto.diary.addDiaryEntry.AddDiaryEntryResponse;
 import com.Riseon.app.dto.diary.addDiaryEntry.AddDiaryEntryRequest;
@@ -21,27 +24,36 @@ import com.Riseon.app.dto.diary.updateDiaryEntry.UpdateDiaryEntryRequest;
 public class DiaryController {
     @Autowired
     private DiaryServices diaryServices;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /** Adds a new diary entry for a user for a particular day */
     @PostMapping(ApiEndPoints.DIARY_ADD)
     @ResponseBody
-    public ResponseEntity<AddDiaryEntryResponse> addDiaryEntry(@RequestBody AddDiaryEntryRequest addDiaryEntryRequest) {
+    public ResponseEntity<AddDiaryEntryResponse> addDiaryEntry(HttpServletRequest request, @RequestBody AddDiaryEntryRequest addDiaryEntryRequest) {
         try{
-            DiaryEntries diaryEntry = diaryServices.createDiaryEntry(addDiaryEntryRequest.getUser_Id(), addDiaryEntryRequest.getTitle(), addDiaryEntryRequest.getContent(), addDiaryEntryRequest.getDiaryDate());
+            // Extracting the token from the request header
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new RuntimeException("Missing or invalid Authorization header");
+            }
+
+            String token = authHeader.substring(7); // Remove "Bearer "
+            String username = jwtUtil.extractUsername(token);
+
+            DiaryEntries diaryEntry = diaryServices.createDiaryEntry(username, addDiaryEntryRequest.getTitle(), addDiaryEntryRequest.getContent(), addDiaryEntryRequest.getDiaryDate());
             AddDiaryEntryResponse addDiaryEntryResponse = new AddDiaryEntryResponse(
                 "Diary entry added successfully",
-                diaryEntry.getDiaryEntry_Id(),
-                diaryEntry.getUser().getUser_Id(),
                 diaryEntry.getTitle(),
                 diaryEntry.getContent(),
                 diaryEntry.getDiaryDate()
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(addDiaryEntryResponse);
         } catch(RuntimeException e) {
-            AddDiaryEntryResponse addDiaryEntryResponse = new AddDiaryEntryResponse(e.getMessage(), null, null, null, null, null);
+            AddDiaryEntryResponse addDiaryEntryResponse = new AddDiaryEntryResponse(e.getMessage(), null, null, null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(addDiaryEntryResponse);
         } catch(Exception e) {
-            AddDiaryEntryResponse addDiaryEntryResponse = new AddDiaryEntryResponse("Failed to add diary entry", null, null, null, null, null);
+            AddDiaryEntryResponse addDiaryEntryResponse = new AddDiaryEntryResponse("Failed to add diary entry", null, null, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(addDiaryEntryResponse);
         }
     }
@@ -49,21 +61,28 @@ public class DiaryController {
     /** Gets a diary entry for a user for a particular day */
     @GetMapping(ApiEndPoints.DIARY_FETCH)
     @ResponseBody
-    public ResponseEntity<GetDiaryEntryResponse> getDiaryEntry(@RequestParam("user_Id") String user_Id, @RequestParam("diaryDate") String diaryDate) {
+    public ResponseEntity<GetDiaryEntryResponse> getDiaryEntry(HttpServletRequest request, @RequestParam("diaryDate") String diaryDate) {
         try{
-            DiaryEntries diaryEntry = diaryServices.getDiaryEntry(user_Id, diaryDate);
+            // Extracting the token from the request header
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new RuntimeException("Missing or invalid Authorization header");
+            }
+            String token = authHeader.substring(7); // Remove "Bearer "
+            String username = jwtUtil.extractUsername(token);
+
+            DiaryEntries diaryEntry = diaryServices.getDiaryEntry(username, diaryDate);
             GetDiaryEntryResponse getDiaryEntryResponse = new GetDiaryEntryResponse(
                 "Diary entry fetched successfully",
-                diaryEntry.getUser().getUser_Id(),
                 diaryEntry.getTitle(),
                 diaryEntry.getContent(),
                 diaryEntry.getDiaryDate());
             return ResponseEntity.status(HttpStatus.OK).body(getDiaryEntryResponse);
         } catch(RuntimeException e) {
-            GetDiaryEntryResponse getDiaryEntryResponse = new GetDiaryEntryResponse(e.getMessage(), null, null, null, null);
+            GetDiaryEntryResponse getDiaryEntryResponse = new GetDiaryEntryResponse(e.getMessage(), null, null, null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getDiaryEntryResponse);
         } catch(Exception e) {
-            GetDiaryEntryResponse getDiaryEntryResponse = new GetDiaryEntryResponse("Failed to fetch diary entry", null, null, null, null);
+            GetDiaryEntryResponse getDiaryEntryResponse = new GetDiaryEntryResponse("Failed to fetch diary entry", null, null, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(getDiaryEntryResponse);
         }
     }
@@ -71,22 +90,29 @@ public class DiaryController {
     /** Updates a diary entry for a user for a particular day */
     @PutMapping(ApiEndPoints.DIARY_UPDATE)
     @ResponseBody
-    public ResponseEntity<UpdateDiaryEntryResponse> updateDiaryEntry(@RequestBody UpdateDiaryEntryRequest updateDiaryEntryRequest) {
+    public ResponseEntity<UpdateDiaryEntryResponse> updateDiaryEntry(HttpServletRequest request, @RequestBody UpdateDiaryEntryRequest updateDiaryEntryRequest) {
         try{
-            DiaryEntries diaryEntry = diaryServices.updateDiaryEntry(updateDiaryEntryRequest.getUser_Id(), updateDiaryEntryRequest.getDiaryDate(), updateDiaryEntryRequest.getTitle(), updateDiaryEntryRequest.getContent());
+            // Extracting the token from the request header
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new RuntimeException("Missing or invalid Authorization header");
+            }
+            String token = authHeader.substring(7); // Remove "Bearer "
+            String username = jwtUtil.extractUsername(token);
+
+            DiaryEntries diaryEntry = diaryServices.updateDiaryEntry(username, updateDiaryEntryRequest.getDiaryDate(), updateDiaryEntryRequest.getTitle(), updateDiaryEntryRequest.getContent());
             UpdateDiaryEntryResponse updateDiaryEntryResponse = new UpdateDiaryEntryResponse(
                 "Diary entry updated successfully",
-                diaryEntry.getDiaryEntry_Id(),
                 diaryEntry.getTitle(),
                 diaryEntry.getContent(),
                 diaryEntry.getDiaryDate()
             );
             return ResponseEntity.status(HttpStatus.OK).body(updateDiaryEntryResponse);
         } catch(RuntimeException e) {
-            UpdateDiaryEntryResponse updateDiaryEntryResponse = new UpdateDiaryEntryResponse(e.getMessage(), null, null, null, null);
+            UpdateDiaryEntryResponse updateDiaryEntryResponse = new UpdateDiaryEntryResponse(e.getMessage(), null, null, null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(updateDiaryEntryResponse);
         } catch(Exception e) {
-            UpdateDiaryEntryResponse updateDiaryEntryResponse = new UpdateDiaryEntryResponse("Failed to update diary entry", null, null, null, null);
+            UpdateDiaryEntryResponse updateDiaryEntryResponse = new UpdateDiaryEntryResponse("Failed to update diary entry", null, null, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(updateDiaryEntryResponse);
         }
     }
@@ -94,9 +120,17 @@ public class DiaryController {
     /** Deletes a diary entry for a user for a particular day */
     @DeleteMapping(ApiEndPoints.DIARY_DELETE)
     @ResponseBody
-    public ResponseEntity<String> deleteDiaryEntry(@RequestParam("user_Id") String user_Id, @RequestParam("diaryDate") String diaryDate){
+    public ResponseEntity<String> deleteDiaryEntry(HttpServletRequest request, @RequestParam("diaryDate") String diaryDate){
         try{
-            diaryServices.deleteDiaryEntry(user_Id, diaryDate);
+            // Extracting the token from the request header
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new RuntimeException("Missing or invalid Authorization header");
+            }
+            String token = authHeader.substring(7); // Remove "Bearer "
+            String username = jwtUtil.extractUsername(token);
+
+            diaryServices.deleteDiaryEntry(username, diaryDate);
             return ResponseEntity.status(HttpStatus.OK).body("Diary entry deleted successfully");
         } catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Diary entry not found");

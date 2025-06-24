@@ -1,5 +1,7 @@
 package com.Riseon.app.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,20 +21,20 @@ public class ResolutionServices {
     public Resolutions addResolution(String user_Id, String title, String description, Boolean isPublic) {
         // null checks
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
-        Resolutions resolution = resolutionsRepository.findByUserAndTitle(user, title);
+        Optional<Resolutions> resolution = resolutionsRepository.findByUserAndTitle(user, title);
         if (resolution != null) throw new RuntimeException("Resolution with this title already exists for the user");
 
         // Create a new resolution
-        resolution = new Resolutions();
-        resolution.setUser(user);
-        resolution.setTitle(title);
-        resolution.setDescription(description);
-        resolution.setIsPublic(isPublic);
-        resolution.setIsActive(true);
-        resolution.setCreatedAt(java.time.LocalDateTime.now());
+        Resolutions newResolution = new Resolutions();
+        newResolution.setUser(user);
+        newResolution.setTitle(title);
+        newResolution.setDescription(description);
+        newResolution.setIsPublic(isPublic);
+        newResolution.setIsActive(true);
+        newResolution.setCreatedAt(java.time.LocalDateTime.now());
 
         // saving into database
-        return resolutionsRepository.save(resolution);
+        return resolutionsRepository.save(newResolution);
     }
 
     /** Method to view all resolutions of a user */

@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class AddDiaryEntryResponse {
     private String message;
-    private String diaryId;
-    private String userId;
     private String title;
     private String content;
     private LocalDate diaryDate;
