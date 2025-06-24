@@ -1,15 +1,32 @@
 package com.Riseon.app.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.Riseon.app.repositories.UsersRepository;
 import com.Riseon.app.entities.Users;
 
 @Service
-public class UserServices {
+public class UserServices implements UserDetailsService {
     @Autowired
     private UsersRepository usersRepository;
+
+    /** Implementation of UserDetailsService for Spring Security */
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Since your JWT tokens use email, this method receives email as parameter
+        Users user = usersRepository.findByEmail(email);
+        if(user==null) throw new RuntimeException("User not found");
+        
+        return org.springframework.security.core.userdetails.User.builder()
+            .username(user.getEmail())
+            .password(user.getPasswordHash())
+            .build();
+    }
 
     /** Retrieves the user details based on the user id */
     public Users getUserById(String user_Id) {

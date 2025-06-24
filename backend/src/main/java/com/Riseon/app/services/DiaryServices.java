@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.Riseon.app.entities.Users;
 import com.Riseon.app.entities.DiaryEntries;
@@ -22,17 +23,19 @@ public class DiaryServices {
     public DiaryEntries createDiaryEntry(String user_Id, String title, String content, String diaryDate) {
         // null check for user
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
-
-        // checking if diary entry already exists for the user on that date
-        if(!diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate)).isDeleted()) throw new RuntimeException("Diary entry already exists for the user on that date");
+        // null check for diary on that date
+        DiaryEntries existingEntry = diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate));
+        if (existingEntry != null && !existingEntry.isDeleted()) {
+            throw new RuntimeException("Diary entry already exists for the user on that date");
+        }
 
         // creating new diary entry
         DiaryEntries diaryEntry = new DiaryEntries();
         diaryEntry.setUser(user);
         diaryEntry.setTitle(title);
         diaryEntry.setContent(content);
-        diaryEntry.setDiaryDate(java.time.LocalDate.parse(diaryDate));
-        diaryEntry.setCreatedAt(java.time.LocalDateTime.now());
+        diaryEntry.setDiaryDate(LocalDate.parse(diaryDate));
+        diaryEntry.setCreatedAt(LocalDateTime.now());
 
         // saving diary entry to the database
         return diaryEntriesRepository.save(diaryEntry);
@@ -68,10 +71,12 @@ public class DiaryServices {
     public void deleteDiaryEntry(String user_Id, String diaryDate) {
         // null checks
         Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
-        if (diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate)).isDeleted()) throw new RuntimeException("Diary entry not found");
+        DiaryEntries diaryEntry = diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate));
+        if (diaryEntry == null || diaryEntry.isDeleted()) {
+            throw new RuntimeException("Diary entry not found");
+        }
 
         // deleting diary entry - soft delete
-        DiaryEntries diaryEntry = diaryEntriesRepository.findByUserAndDiaryDate(user, LocalDate.parse(diaryDate));
         diaryEntry.setDeleted(true);
         diaryEntriesRepository.save(diaryEntry);
     }

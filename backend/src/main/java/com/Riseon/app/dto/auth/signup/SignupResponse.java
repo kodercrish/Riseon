@@ -11,4 +11,5 @@ public class SignupResponse {
     private String user_Id;
     private String username;
     private String email;
+    private String token;
 }
