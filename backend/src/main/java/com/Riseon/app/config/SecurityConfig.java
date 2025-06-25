@@ -43,7 +43,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/**").permitAll() // Allow login/signup without token
-                .requestMatchers("/api/user/**", "/api/diaryentry/**", "/api/plan/**", "/api/resolution/**").authenticated() // Require token for other endpoints
+                .requestMatchers("/api/user/**", "/api/diaryentry/**", "/api/plan/**", "/api/resolution/**", "/api/resolutionlog/**").authenticated() // Require token for other endpoints
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

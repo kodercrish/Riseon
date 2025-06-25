@@ -16,4 +16,6 @@ public interface ResolutionLogsRepository extends JpaRepository<ResolutionLogs, 
 
     /** Method to find a resolution log by resolution and date */
     Optional<ResolutionLogs> findByResolutionAndLogDate(Resolutions resolution, LocalDate localDate);
+
+    boolean existsByResolutionAndLogDate(Resolutions resolution, LocalDate localDate);
 }
