@@ -19,7 +19,7 @@ import jakarta.persistence.UniqueConstraint;
 
 /** DiaryEntries class having all the user's diary entry's data */
 @Entity
-@Table(name = "diary_entries", uniqueConstraints = @UniqueConstraint(columnNames = {"user_Id", "diaryDate", "isDeleted"}))
+@Table(name = "diary_entries", uniqueConstraints = @UniqueConstraint(columnNames = {"user_Id", "diaryDate"}))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class DiaryEntries {
     @Id
@@ -38,9 +38,6 @@ public class DiaryEntries {
 
     @Column(nullable = false)
     private LocalDate diaryDate;   // part of Unique Key
-
-    @Column(nullable = false)
-    private boolean isDeleted = false;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
