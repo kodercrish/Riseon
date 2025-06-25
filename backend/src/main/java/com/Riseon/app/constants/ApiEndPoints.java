@@ -20,4 +20,26 @@ public class ApiEndPoints {
     public static final String DIARY_FETCH = "/get";
     public static final String DIARY_UPDATE = "/update";
     public static final String DIARY_DELETE = "/delete";
+
+    // Plan endpoints
+    public static final String PLAN_BASE = BASE_URL + "/plan";
+    public static final String PLAN_ADD = "/add";
+    public static final String PLAN_FETCH = "/get";
+    public static final String PLAN_UPDATE = "/update";
+    public static final String PLAN_DELETE = "/delete";
+
+    // Resolution endpoints
+    public static final String RESOLUTION_BASE = BASE_URL + "/resolution";
+    public static final String RESOLUTION_ADD = "/add";
+    public static final String RESOLUTION_FETCH_ALL = "/getall";
+    public static final String RESOLUTION_FETCH_PUBLIC = "/getpublic";
+    public static final String RESOLUTION_UPDATE = "/update";
+    public static final String RESOLUTION_DELETE = "/delete";
+
+    // Resolutionlogs endpoints
+    public static final String RESOLUTIONLOG_BASE = BASE_URL + "/resolutionlog";
+    public static final String RESOLUTIONLOG_ADD = "/add";
+    public static final String RESOLUTIONLOG_FETCH = "/get";
+    public static final String RESOLUTIONLOG_UPDATE = "/update";
+    public static final String RESOLUTIONLOG_DELETE = "/delete";
 }

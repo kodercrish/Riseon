@@ -18,11 +18,11 @@ public class ResolutionServices {
     private UsersRepository usersRepository;
 
     /** Method to add a new resolution for a user */
-    public Resolutions addResolution(String user_Id, String title, String description, Boolean isPublic) {
+    public void addResolution(String username, String title, String description, Boolean isPublic) {
         // null checks
-        Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         Optional<Resolutions> resolution = resolutionsRepository.findByUserAndTitle(user, title);
-        if (resolution != null) throw new RuntimeException("Resolution with this title already exists for the user");
+        if (resolution.isPresent()) throw new RuntimeException("Resolution with this title already exists for the user");
 
         // Create a new resolution
         Resolutions newResolution = new Resolutions();
@@ -34,31 +34,31 @@ public class ResolutionServices {
         newResolution.setCreatedAt(java.time.LocalDateTime.now());
 
         // saving into database
-        return resolutionsRepository.save(newResolution);
+        resolutionsRepository.save(newResolution);
+        return;
     }
 
-    /** Method to view all resolutions of a user */
-    public Iterable<Resolutions> viewAllResolutions(String user_Id) {
+    /** Method to get all resolutions of a user */
+    public Iterable<Resolutions> getAllResolutions(String username) {
         // null check
-        Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
         return resolutionsRepository.findByUser(user);
     }
 
     /** Method to view all public resolutions of a user */
-    public Iterable<Resolutions> viewAllPublicResolutions(String user_Id) {
+    public Iterable<Resolutions> getPublicResolutions(String username) {
         // null check
-        Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
         return resolutionsRepository.findByUserAndIsPublic(user, true);
     }
 
     /** Method to update a resolution */
-    public Resolutions updateResolution(String user_Id, String resolution_Id, String title, String description, Boolean isPublic) {
+    public void updateResolution(String username, String title, String description, Boolean isPublic) {
         // null checks
-        Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
-        Resolutions resolution = resolutionsRepository.findById(resolution_Id).orElseThrow(() -> new RuntimeException("Resolution not found"));
-        if (!resolution.getUser().equals(user)) throw new RuntimeException("Resolution does not belong to the user");
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        Resolutions resolution = resolutionsRepository.findByUserAndTitle(user, title).orElseThrow(() -> new RuntimeException("Resolution not found"));
 
         // update values
         if(title != null && !title.trim().isEmpty()) resolution.setTitle(title);
@@ -67,15 +67,15 @@ public class ResolutionServices {
         resolution.setIsActive(true);
 
         // saving into database
-        return resolutionsRepository.save(resolution);
+        resolutionsRepository.save(resolution);
+        return;
     }
 
     /** Method to delete a resolution */
-    public void deleteResolution(String user_Id, String resolution_Id) {
+    public void deleteResolution(String username, String title) {
         // null checks
-        Users user = usersRepository.findById(user_Id).orElseThrow(() -> new RuntimeException("User not found"));
-        Resolutions resolution = resolutionsRepository.findById(resolution_Id).orElseThrow(() -> new RuntimeException("Resolution not found"));
-        if (!resolution.getUser().equals(user)) throw new RuntimeException("Resolution does not belong to the user");
+        Users user = usersRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        Resolutions resolution = resolutionsRepository.findByUserAndTitle(user, title).orElseThrow(() -> new RuntimeException("Resolution not found"));
 
         resolution.setIsActive(false); // Soft delete
 
