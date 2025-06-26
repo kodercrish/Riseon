@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import com.Riseon.app.constants.ApiEndPoints;
 import com.Riseon.app.entities.Users;
 import com.Riseon.app.services.UserServices;
+import com.Riseon.app.util.JwtCookieUtil;
 import com.Riseon.app.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.Riseon.app.dto.user.getUserDetails.GetUserDetailsResponse;
 import com.Riseon.app.dto.user.updateUserDetails.UpdateUserDetailsRequest;
@@ -25,57 +27,62 @@ public class UserController {
     private UserServices userServices;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private JwtCookieUtil jwtCookieUtil;
 
     /** Retrieves the user details based on the username */
     @GetMapping(ApiEndPoints.USER_FETCH)
     @ResponseBody
-    public ResponseEntity<GetUserDetailsResponse> getUserDetails(@RequestParam(value = "username") String username) {
-        try{
+    public ResponseEntity<GetUserDetailsResponse> getUserDetails(@RequestParam("username") String username) {
+        try {
             Users user = userServices.getUserByUsername(username);
-            GetUserDetailsResponse getUserDetailsResponse = new GetUserDetailsResponse(
-                "User details retrieved successfully",
-                user.getUsername(),
-                user.getFullName(),
-                user.getJoinedAt()
+            GetUserDetailsResponse response = new GetUserDetailsResponse(
+                    "User details retrieved successfully",
+                    user.getUsername(),
+                    user.getFullName(),
+                    user.getJoinedAt()
             );
-            return ResponseEntity.status(HttpStatus.OK).body(getUserDetailsResponse);
-        } catch(RuntimeException e) {
-            GetUserDetailsResponse getUserDetailsResponse = new GetUserDetailsResponse(e.getMessage(), null, null, null);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getUserDetailsResponse);
-        } catch(Exception e) {
-            GetUserDetailsResponse getUserDetailsResponse = new GetUserDetailsResponse("Failed to retrieve user details", null, null, null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(getUserDetailsResponse);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new GetUserDetailsResponse(e.getMessage(), null, null, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GetUserDetailsResponse("Failed to retrieve user details", null, null, null));
         }
     }
 
     /** Updates the user details based on the username */
     @PutMapping(ApiEndPoints.USER_UPDATE)
     @ResponseBody
-    public ResponseEntity<UpdateUserDetailsResponse> updateUserDetails(HttpServletRequest request, @RequestBody UpdateUserDetailsRequest updateUserDetailsRequest) {
-        try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
+    public ResponseEntity<UpdateUserDetailsResponse> updateUserDetails(HttpServletRequest request, HttpServletResponse response, @RequestBody UpdateUserDetailsRequest updateUserDetailsRequest) {
+        try {
+            String jwt = jwtCookieUtil.extractJwtFromCookies(request);
+            String oldUsername = jwtUtil.extractUsername(jwt);
+            String user_Id = jwtUtil.extractUser_Id(jwt); // Assuming this method exists
+
+            String message = userServices.updateUserDetails(oldUsername, updateUserDetailsRequest.getUsername(), updateUserDetailsRequest.getFullName());
+
+            String updatedJwt = jwt;
+
+            // If username has changed, generate new JWT
+            if (!oldUsername.equals(updateUserDetailsRequest.getUsername())) {
+                // Generate new JWT with updated username
+                updatedJwt = jwtUtil.generateToken(user_Id, updateUserDetailsRequest.getUsername());
+
+                // Set new JWT as HttpOnly cookie
+                jwtCookieUtil.setJwtCookie(response, updatedJwt);
             }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
 
-            String message = userServices.updateUserDetails(username, updateUserDetailsRequest.getUsername(), updateUserDetailsRequest.getFullName());
+            UpdateUserDetailsResponse updateUserDetailsResponse = new UpdateUserDetailsResponse(message); // token removed from response
+            return ResponseEntity.ok(updateUserDetailsResponse);
 
-            String newToken = token;
-            if(!username.equals(updateUserDetailsRequest.getUsername())){
-                // generate a new jwt based on the updated username
-                String user_Id = jwtUtil.extractUser_Id(token); // Extract the user_Id from the old token
-                newToken = jwtUtil.generateToken(user_Id, updateUserDetailsRequest.getUsername());
-            }
-
-            UpdateUserDetailsResponse updateUserDetailsResponse = new UpdateUserDetailsResponse(message, newToken);
-            return ResponseEntity.status(HttpStatus.OK).body(updateUserDetailsResponse);
-        } catch(RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UpdateUserDetailsResponse(e.getMessage(), null));
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new UpdateUserDetailsResponse("Failed to update user details", null));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new UpdateUserDetailsResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UpdateUserDetailsResponse("Failed to update user details"));
         }
     }
 }

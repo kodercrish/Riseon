@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.Riseon.app.util.JwtUtil;
+import com.Riseon.app.util.JwtCookieUtil;
 
 import com.Riseon.app.constants.ApiEndPoints;
 import com.Riseon.app.entities.Plans;
@@ -29,21 +29,15 @@ public class PlanController {
     @Autowired
     private PlansServices planServices;
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtCookieUtil jwtCookieUtil;
 
     /** Method to add a new plan */
     @PostMapping(ApiEndPoints.PLAN_ADD)
     @ResponseBody
     public ResponseEntity<AddPlanResponse> addPlan(HttpServletRequest request, @RequestBody AddPlanRequest addPlanRequest) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             planServices.createPlan(username, addPlanRequest.getTitle(), addPlanRequest.getDescription(), addPlanRequest.getDate(), addPlanRequest.getDeadline());
             AddPlanResponse addPlanResponse = new AddPlanResponse("Plan added successfully");
@@ -62,14 +56,8 @@ public class PlanController {
     @ResponseBody
     public ResponseEntity<GetPlansResponse> getAllPlans(HttpServletRequest request) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             Iterable<Plans> plans = planServices.getAllPlans(username);
             List<PlanData> responseList = new ArrayList<>();
@@ -97,14 +85,8 @@ public class PlanController {
     @ResponseBody
     public ResponseEntity<UpdatePlanResponse> updatePlan(HttpServletRequest request, @RequestBody UpdatePlanRequest updatePlanRequest) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             planServices.updatePlan(username, updatePlanRequest.getTitle(), updatePlanRequest.getDescription(), updatePlanRequest.getDate(), updatePlanRequest.getDeadline());
 
@@ -122,14 +104,8 @@ public class PlanController {
     @ResponseBody
     public ResponseEntity<String> deletePlan(HttpServletRequest request, @RequestParam String date, @RequestParam String title) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             planServices.deletePlan(username, title, date);
 

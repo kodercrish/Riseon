@@ -15,7 +15,11 @@ import com.Riseon.app.constants.ApiEndPoints;
 
 import com.Riseon.app.entities.Users;
 import com.Riseon.app.services.AuthServices;
+import com.Riseon.app.util.JwtCookieUtil;
 import com.Riseon.app.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.Riseon.app.dto.auth.login.LoginRequest;
 import com.Riseon.app.dto.auth.login.LoginResponse;
 import com.Riseon.app.dto.auth.signup.SignupRequest;
@@ -30,23 +34,30 @@ public class AuthController {
     private AuthServices authServicesServices;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private JwtCookieUtil jwtCookieUtil;
 
     /** login user */
     @PostMapping(ApiEndPoints.AUTH_LOGIN)
     @ResponseBody
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try{
             Users authenticatedUser = authServicesServices.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
 
-            String responseToken = jwtUtil.generateToken(authenticatedUser.getUser_Id(), authenticatedUser.getUsername());
+            // create jwt token
+            String jwtToken = jwtUtil.generateToken(authenticatedUser.getUser_Id(), authenticatedUser.getUsername());
 
-            LoginResponse loginResponse = new LoginResponse("Login successful", responseToken);
-            return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+            // Create secure HttpOnly cookie
+            jwtCookieUtil.setJwtCookie(response, jwtToken);            
+
+            // Response body (no token, only message passed)
+            LoginResponse loginResponse = new LoginResponse("Login successful");
+            return ResponseEntity.ok(loginResponse);
         } catch(RuntimeException e) {
-            LoginResponse loginResponse = new LoginResponse(e.getMessage(), null);
+            LoginResponse loginResponse = new LoginResponse(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
         } catch(Exception e) {
-            LoginResponse loginResponse = new LoginResponse("Login failed", null);
+            LoginResponse loginResponse = new LoginResponse("Login failed");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(loginResponse);
         }
     }
@@ -54,20 +65,30 @@ public class AuthController {
     /** Creates a new user */
     @PostMapping(ApiEndPoints.AUTH_SIGNUP)
     @ResponseBody
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest signupRequest, HttpServletResponse response) {
         try{
             Users newUser = authServicesServices.createUser(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getFullName());
 
-            String responseToken = jwtUtil.generateToken(newUser.getUser_Id(), newUser.getUsername());
+            // create jwt token
+            String jwtToken = jwtUtil.generateToken(newUser.getUser_Id(), newUser.getUsername());
 
-            SignupResponse signupResponse = new SignupResponse("Signup successful", responseToken);
+            // Create secure HttpOnly cookie
+            jwtCookieUtil.setJwtCookie(response, jwtToken);
+
+            SignupResponse signupResponse = new SignupResponse("Signup successful");
             return ResponseEntity.status(HttpStatus.CREATED).body(signupResponse);
-        } catch(RuntimeException e) {
-            SignupResponse signupResponse = new SignupResponse(e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(signupResponse);
-        } catch(Exception e) {
-            SignupResponse signupResponse = new SignupResponse("Signup failed", null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(signupResponse);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SignupResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SignupResponse("Signup failed"));
         }
+    }
+
+    @PostMapping(ApiEndPoints.AUTH_LOGOUT)
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+        // clear the cookie
+        jwtCookieUtil.clearJwtCookie(response);
+
+        return ResponseEntity.ok("Logged out successfully");
     }
 }

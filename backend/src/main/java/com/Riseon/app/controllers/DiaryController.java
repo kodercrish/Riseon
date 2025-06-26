@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.Riseon.app.constants.ApiEndPoints;
 import com.Riseon.app.entities.DiaryEntries;
 import com.Riseon.app.services.DiaryServices;
-import com.Riseon.app.util.JwtUtil;
+import com.Riseon.app.util.JwtCookieUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,21 +25,15 @@ public class DiaryController {
     @Autowired
     private DiaryServices diaryServices;
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtCookieUtil jwtCookieUtil;
 
     /** Adds a new diary entry for a user for a particular day */
     @PostMapping(ApiEndPoints.DIARY_ADD)
     @ResponseBody
     public ResponseEntity<AddDiaryEntryResponse> addDiaryEntry(HttpServletRequest request, @RequestBody AddDiaryEntryRequest addDiaryEntryRequest) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             DiaryEntries diaryEntry = diaryServices.createDiaryEntry(username, addDiaryEntryRequest.getTitle(), addDiaryEntryRequest.getContent(), addDiaryEntryRequest.getDiaryDate());
             AddDiaryEntryResponse addDiaryEntryResponse = new AddDiaryEntryResponse(
@@ -63,13 +57,8 @@ public class DiaryController {
     @ResponseBody
     public ResponseEntity<GetDiaryEntryResponse> getDiaryEntry(HttpServletRequest request, @RequestParam("diaryDate") String diaryDate) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             DiaryEntries diaryEntry = diaryServices.getDiaryEntry(username, diaryDate);
             GetDiaryEntryResponse getDiaryEntryResponse = new GetDiaryEntryResponse(
@@ -92,13 +81,8 @@ public class DiaryController {
     @ResponseBody
     public ResponseEntity<UpdateDiaryEntryResponse> updateDiaryEntry(HttpServletRequest request, @RequestBody UpdateDiaryEntryRequest updateDiaryEntryRequest) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             DiaryEntries diaryEntry = diaryServices.updateDiaryEntry(username, updateDiaryEntryRequest.getDiaryDate(), updateDiaryEntryRequest.getTitle(), updateDiaryEntryRequest.getContent());
             UpdateDiaryEntryResponse updateDiaryEntryResponse = new UpdateDiaryEntryResponse(
@@ -122,13 +106,8 @@ public class DiaryController {
     @ResponseBody
     public ResponseEntity<String> deleteDiaryEntry(HttpServletRequest request, @RequestParam("diaryDate") String diaryDate){
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             diaryServices.deleteDiaryEntry(username, diaryDate);
             return ResponseEntity.status(HttpStatus.OK).body("Diary entry deleted successfully");

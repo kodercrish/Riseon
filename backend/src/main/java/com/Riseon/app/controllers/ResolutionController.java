@@ -18,10 +18,10 @@ import com.Riseon.app.dto.resolution.getPublicResolutions.GetPublicResolutionsRe
 import com.Riseon.app.dto.resolution.getPublicResolutions.PublicResolutionData;
 import com.Riseon.app.dto.resolution.updateResolution.UpdateResolutionRequest;
 import com.Riseon.app.dto.resolution.updateResolution.UpdateResolutionResponse;
-import com.Riseon.app.util.JwtUtil;
 
 import com.Riseon.app.entities.Resolutions;
 import com.Riseon.app.services.ResolutionServices;
+import com.Riseon.app.util.JwtCookieUtil;
 
 @RestController
 @RequestMapping(ApiEndPoints.RESOLUTION_BASE)
@@ -30,20 +30,15 @@ public class ResolutionController {
     @Autowired
     private ResolutionServices resolutionServices;
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtCookieUtil jwtCookieUtil;
 
     /** Method to add a new resolution for a user */
     @PostMapping(ApiEndPoints.RESOLUTION_ADD)
     @ResponseBody
     public ResponseEntity<AddResolutionResponse> addResolution(HttpServletRequest request, @RequestBody AddResolutionRequest addResolutionRequest) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             resolutionServices.addResolution(username, addResolutionRequest.getTitle(), addResolutionRequest.getDescription(), addResolutionRequest.getIsPublic());
 
@@ -60,13 +55,8 @@ public class ResolutionController {
     @ResponseBody
     public ResponseEntity<GetAllResolutionsResponse> getAllResolutions(HttpServletRequest request) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             Iterable<Resolutions> resolutions = resolutionServices.getAllResolutions(username);
             List<ResolutionData> resolutionDataList = new ArrayList<>();
@@ -117,13 +107,8 @@ public class ResolutionController {
     @ResponseBody
     public ResponseEntity<UpdateResolutionResponse> updateResolution(HttpServletRequest request, @RequestBody UpdateResolutionRequest updateResolutionRequest) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             resolutionServices.updateResolution(username, updateResolutionRequest.getTitle(), updateResolutionRequest.getDescription(), updateResolutionRequest.getIsPublic());
 
@@ -140,13 +125,8 @@ public class ResolutionController {
     @ResponseBody
     public ResponseEntity<String> deleteResolution(HttpServletRequest request, @RequestParam String title) {
         try{
-            // Extracting the token from the request header
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                throw new RuntimeException("Missing or invalid Authorization header");
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            String username = jwtUtil.extractUsername(token);
+            // get username from jwt token in the cookie
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
 
             resolutionServices.deleteResolution(username, title);
 
