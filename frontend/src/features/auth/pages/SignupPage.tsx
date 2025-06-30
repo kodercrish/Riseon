@@ -1,10 +1,11 @@
 import SignupForm from "../components/SignupForm";
+import AuthLayout from "../../../layouts/AuthLayout";
 
 const SignupPage = () => {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <AuthLayout>  {/* Can add a custom title and subtitle here if needed */}
       <SignupForm />
-    </div>
+    </AuthLayout>
   );
 };
 

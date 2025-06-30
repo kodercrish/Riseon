@@ -1,10 +1,11 @@
 import LoginForm from '../components/LoginForm';
+import AuthLayout from '../../../layouts/AuthLayout';
 
 const LoginPage = () => {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <AuthLayout>  {/* Can add a custom title and subtitle here if needed */}
       <LoginForm />
-    </div>
+    </AuthLayout>
   );
 };
 
