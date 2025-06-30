@@ -41,6 +41,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 const response = await api.get(ENDPOINTS.AUTH.FETCH);
                 const data = response.data;
                 localStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('username', data.username);
+                localStorage.setItem('fullName', data.fullName);
+                localStorage.setItem('joinedAt', data.joinedAt);
 
                 setIsLoggedIn(true);
             } catch {

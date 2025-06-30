@@ -1,10 +1,27 @@
-import { Flame, Target, CheckCircle } from 'lucide-react';
+import { useWelcomeData } from '../hooks/useWelcomeData';
+import WelcomeStats from './subComponents/WelcomeStats';
 
-interface WelcomeSectionProps {
-  userName: string;
-}
+const WelcomeSection = () => {
+  const { fullName, streak, activeGoals, completionRate, loading, greeting } = useWelcomeData();
 
-const WelcomeSection = ({ userName }: WelcomeSectionProps) => {
+  if (loading) {
+    return (
+      <div className="mb-8">
+        <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-teal-500 rounded-3xl p-8 text-white relative overflow-hidden">
+          <div className="animate-pulse">
+            <div className="h-8 bg-white/20 rounded mb-4 w-3/4"></div>
+            <div className="h-4 bg-white/20 rounded mb-6 w-1/2"></div>
+            <div className="flex gap-4">
+              <div className="h-10 bg-white/20 rounded-2xl w-32"></div>
+              <div className="h-10 bg-white/20 rounded-2xl w-32"></div>
+              <div className="h-10 bg-white/20 rounded-2xl w-32"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mb-8">
       <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-teal-500 rounded-3xl p-8 text-white relative overflow-hidden">
@@ -16,23 +33,18 @@ const WelcomeSection = ({ userName }: WelcomeSectionProps) => {
         </div>
         
         <div className="relative z-10">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Good morning, {userName}! 🌟</h1>
-          <p className="text-white/90 text-lg mb-6">Ready to continue your growth journey? You're doing amazing!</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            {greeting}, {fullName}! 🌟
+          </h1>
+          <p className="text-white/90 text-lg mb-6">
+            Ready to continue your growth journey? You're doing amazing!
+          </p>
           
-          <div className="flex flex-wrap gap-4">
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-2 flex items-center space-x-2">
-              <Flame className="w-5 h-5 text-orange-300" />
-              <span className="font-semibold">7-day streak</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-2 flex items-center space-x-2">
-              <Target className="w-5 h-5 text-green-300" />
-              <span className="font-semibold">3 goals active</span>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-4 py-2 flex items-center space-x-2">
-              <CheckCircle className="w-5 h-5 text-blue-300" />
-              <span className="font-semibold">85% completion</span>
-            </div>
-          </div>
+          <WelcomeStats 
+            streak={streak}
+            activeGoals={activeGoals}
+            completionRate={completionRate}
+          />
         </div>
       </div>
     </div>
