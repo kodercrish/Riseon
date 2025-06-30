@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,15 +16,18 @@ import com.Riseon.app.constants.ApiEndPoints;
 
 import com.Riseon.app.entities.Users;
 import com.Riseon.app.services.AuthServices;
+import com.Riseon.app.services.UserServices;
 import com.Riseon.app.util.JwtCookieUtil;
 import com.Riseon.app.util.JwtUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.Riseon.app.dto.auth.login.LoginRequest;
 import com.Riseon.app.dto.auth.login.LoginResponse;
 import com.Riseon.app.dto.auth.signup.SignupRequest;
 import com.Riseon.app.dto.auth.signup.SignupResponse;
+import com.Riseon.app.dto.user.getUserDetails.GetUserDetailsResponse;
 
 @RestController
 @RequestMapping(ApiEndPoints.AUTH_BASE)
@@ -32,6 +36,8 @@ public class AuthController {
 
     @Autowired
     private AuthServices authServicesServices;
+    @Autowired
+    private UserServices userServices;
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
@@ -81,6 +87,25 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SignupResponse(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SignupResponse("Signup failed"));
+        }
+    }
+
+    @GetMapping(ApiEndPoints.AUTH_FETCH_USER)
+    @ResponseBody
+    public ResponseEntity<GetUserDetailsResponse> getAuthenticatedUser(HttpServletRequest request) {
+        try {
+            String username = jwtCookieUtil.extractUsernameFromRequest(request);
+            Users user = userServices.getUserByUsername(username);
+            GetUserDetailsResponse response = new GetUserDetailsResponse(
+                "Authenticated user fetched",
+                user.getUsername(),
+                user.getFullName(),
+                user.getJoinedAt()
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new GetUserDetailsResponse("Unauthorized", null, null, null));
         }
     }
 

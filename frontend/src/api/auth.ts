@@ -10,6 +10,7 @@ interface SignupRequest {
     username: string;
     email: string;
     password: string;
+    fullName: string;
 }
 
 interface AuthResponse {

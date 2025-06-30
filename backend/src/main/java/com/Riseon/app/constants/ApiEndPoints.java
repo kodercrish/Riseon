@@ -8,6 +8,7 @@ public class ApiEndPoints {
     public static final String AUTH_BASE = BASE_URL + "/auth";
     public static final String AUTH_LOGIN = "/login";
     public static final String AUTH_SIGNUP = "/signup";
+    public static final String AUTH_FETCH_USER = "/fetch";
     public static final String AUTH_LOGOUT = "/logout";
 
     // User endpoints

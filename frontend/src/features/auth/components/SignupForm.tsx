@@ -6,6 +6,7 @@ const SignupForm = () => {
     username,
     email,
     password,
+    fullName,
     error,
     isLoading,
     showPassword,
@@ -13,6 +14,7 @@ const SignupForm = () => {
     setEmail,
     setPassword,
     setShowPassword,
+    setFullName,
     handleSignup,
     navigateToLogin
   } = useSignup();
@@ -86,6 +88,25 @@ const SignupForm = () => {
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
+          </div>
+        </div>
+
+        {/* Full Name Field */}
+        <div className="spac-y-2">
+          <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700">
+            Full Name
+          </label>
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              id="fullName"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 outline-none transition-all duration-300 text-gray-800 placeholder-gray-500"
+              placeholder="Enter your full name"
+              required
+            />
           </div>
         </div>
 
