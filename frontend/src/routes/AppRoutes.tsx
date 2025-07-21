@@ -3,6 +3,7 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
 import ROUTES from '../constants/urls';
 import Dashboard from '../features/dashboard/pages/Dashboard';
+import PlansCalendar from '../features/calendar/pages/PlansCalendar';
 import ProtectedRoute from './ProtectedRoute';
 
 const AppRoutes = () => {
@@ -20,6 +21,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.PLANS}
+        element={
+          <ProtectedRoute>
+            <PlansCalendar />
           </ProtectedRoute>
         }
       />

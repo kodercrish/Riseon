@@ -1,29 +1,21 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/shared/Navbar';
 import WelcomeSection from '../components/WelcomeSection';
 import StatsOverview from '../components/StatsOverview';
 import MainFeatures from '../components/MainFeatures';
 import RecentActivity from '../components/RecentActivity';
-import Calendar from '../../calendar/pages/Calendar';
+import ROUTES from '../../../constants/urls';
 
 function Dashboard() {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'calendar'>('dashboard');
+  const navigate = useNavigate();
 
   const handleFeatureClick = (feature: string) => {
     if (feature === 'calendar') {
-      setCurrentView('calendar');
+      navigate(ROUTES.PLANS);
     } else {
       console.log(`Navigate to ${feature}`);
     }
   };
-
-  const handleBackToDashboard = () => {
-    setCurrentView('dashboard');
-  };
-
-  if (currentView === 'calendar') {
-    return <Calendar onBack={handleBackToDashboard} />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-teal-50">

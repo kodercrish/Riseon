@@ -11,6 +11,12 @@ const ENDPOINTS = {
   },
   USER: {
     FETCH: `${BASE_API}/user/getuser`,
+  },
+  PLAN: {
+    GET: `${BASE_API}/plan/get`,
+    ADD: `${BASE_API}/plan/add`,
+    UPDATE: `${BASE_API}/plan/update`,
+    DELETE: `${BASE_API}/plan/delete`,
   }
 };
 

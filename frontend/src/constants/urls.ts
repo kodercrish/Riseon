@@ -5,6 +5,7 @@ const ROUTES = {
   
     // App (protected)
     DASHBOARD: '/dashboard',
+    PLANS: '/plans',
     SETTINGS: '/settings',
     PROFILE: '/profile',
   
