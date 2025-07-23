@@ -12,6 +12,8 @@ function Dashboard() {
   const handleFeatureClick = (feature: string) => {
     if (feature === 'calendar') {
       navigate(ROUTES.PLANS);
+    } else if (feature === 'journal') {
+      navigate(ROUTES.DIARY);
     } else {
       console.log(`Navigate to ${feature}`);
     }

@@ -17,6 +17,12 @@ const ENDPOINTS = {
     ADD: `${BASE_API}/plan/add`,
     UPDATE: `${BASE_API}/plan/update`,
     DELETE: `${BASE_API}/plan/delete`,
+  },
+  DIARY: {
+    GET: `${BASE_API}/diaryentry/get`,
+    ADD: `${BASE_API}/diaryentry/add`,
+    UPDATE: `${BASE_API}/diaryentry/update`,
+    DELETE: `${BASE_API}/diaryentry/delete`,
   }
 };
 
