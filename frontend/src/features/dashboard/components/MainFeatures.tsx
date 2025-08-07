@@ -53,7 +53,7 @@ const MainFeatures = ({ onFeatureClick }: MainFeaturesProps) => {
                         value: "3"
                     }}
                     actionText="View Goals"
-                    onClick={() => onFeatureClick('goals')}
+                    onClick={() => onFeatureClick('resolutions')}
                 />
             </div>
         </div>

@@ -7,6 +7,7 @@ const ROUTES = {
     DASHBOARD: '/dashboard',
     PLANS: '/plans',
     DIARY : '/journal',
+    RESOLUTIONS: '/resolutions',
     SETTINGS: '/settings',
     PROFILE: '/profile',
   

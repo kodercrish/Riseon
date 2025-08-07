@@ -14,6 +14,8 @@ function Dashboard() {
       navigate(ROUTES.PLANS);
     } else if (feature === 'journal') {
       navigate(ROUTES.DIARY);
+    } else if (feature === 'resolutions') {
+      navigate(ROUTES.RESOLUTIONS);
     } else {
       console.log(`Navigate to ${feature}`);
     }

@@ -1,33 +1,30 @@
 import { useState, useEffect } from 'react';
+import ENDPOINTS from '../constants/endpoints';
 
-export const useUsername = () => {
-  const [username, setUsername] = useState<string>('User');
+export function useUsername() {
+  const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUsername = () => {
+    const fetchUsername = async () => {
       try {
-        const storedUsername = localStorage.getItem('username') || 'User';
-        setUsername(storedUsername);
+        const response = await fetch(ENDPOINTS.AUTH.FETCH, {
+          credentials: 'include',
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setUsername(data.username || data.user?.username);
+        }
       } catch (error) {
-        console.error('Error loading username from localStorage:', error);
-        setUsername('User');
+        console.error('Failed to fetch username:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadUsername();
-
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'username') {
-        loadUsername();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    fetchUsername();
   }, []);
 
   return { username, loading };
-};
+}

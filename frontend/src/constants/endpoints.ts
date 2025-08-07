@@ -23,6 +23,19 @@ const ENDPOINTS = {
     ADD: `${BASE_API}/diaryentry/add`,
     UPDATE: `${BASE_API}/diaryentry/update`,
     DELETE: `${BASE_API}/diaryentry/delete`,
+  },
+  RESOLUTION: {
+    GETALL: `${BASE_API}/resolution/getall`,
+    GETPUBLIC: `${BASE_API}/resolution/getpublic`,
+    ADD: `${BASE_API}/resolution/add`,
+    UPDATE: `${BASE_API}/resolution/update`,
+    DELETE: `${BASE_API}/resolution/delete`,
+  },
+  RESOLUTIONLOG: {
+    GET: `${BASE_API}/resolutionlog/get`,
+    ADD: `${BASE_API}/resolutionlog/add`,
+    UPDATE: `${BASE_API}/resolutionlog/update`,
+    DELETE: `${BASE_API}/resolutionlog/delete`,
   }
 };
 

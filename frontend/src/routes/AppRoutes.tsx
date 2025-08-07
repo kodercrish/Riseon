@@ -1,11 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
+
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
 import ROUTES from '../constants/urls';
 import Dashboard from '../features/dashboard/pages/Dashboard';
 import PlansCalendar from '../features/calendar/pages/PlansCalendar';
 import Diary from '../features/diary/pages/Diary';
-import ProtectedRoute from './ProtectedRoute';
+import Resolutions from '../features/resolutions/pages/Resolutions';
 
 const AppRoutes = () => {
   return (
@@ -40,6 +42,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Diary />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.RESOLUTIONS}
+        element={
+          <ProtectedRoute>
+            <Resolutions />
           </ProtectedRoute>
         }
       />
