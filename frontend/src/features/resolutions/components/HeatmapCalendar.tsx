@@ -49,7 +49,7 @@ export default function HeatmapCalendar({
   onDeleteLog
 }: HeatmapCalendarProps) {
   const [showTodayModal, setShowTodayModal] = useState(false);
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
   const todayLog = goalLogs.find(log => log.logDate === today);
   
   console.log('Heatmap goalLogs:', goalLogs);
@@ -85,7 +85,7 @@ export default function HeatmapCalendar({
   while (currentDate <= endDate) {
     const week = [];
     for (let i = 0; i < 7; i++) {
-      const dateStr = currentDate.toISOString().split('T')[0];
+      const dateStr = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
       const log = goalLogs.find(log => log.logDate === dateStr);
       
       if (log) {
