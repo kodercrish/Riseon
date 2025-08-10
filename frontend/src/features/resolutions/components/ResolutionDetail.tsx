@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronLeft, Target, Calendar as CalendarIcon, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, Target, Calendar as CalendarIcon } from 'lucide-react';
 import type { Resolution, ResolutionLog } from '../types/resolutions.types';
 import HeatmapCalendar from './HeatmapCalendar';
 import TodayLogModal from './TodayLogModal';

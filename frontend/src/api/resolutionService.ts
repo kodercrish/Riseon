@@ -1,5 +1,4 @@
 import ENDPOINTS from '../constants/endpoints';
-import type { Resolution, ResolutionLog } from '../features/resolutions/types/resolutions.types';
 
 interface ResolutionResponse {
   message: string;

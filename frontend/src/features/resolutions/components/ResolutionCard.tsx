@@ -1,4 +1,3 @@
-import React from 'react';
 import { Target, Edit3, Trash2, Eye, EyeOff, Clock } from 'lucide-react';
 import type { Resolution } from '../types/resolutions.types';
 

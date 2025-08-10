@@ -74,11 +74,6 @@ const Diary: React.FC<DiaryProps> = ({ onBack }) => {
     setError(null);
   };
 
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setError(null);
-  };
-
   const handleSaveCreate = async () => {
     await handleCreateEntry();
   };

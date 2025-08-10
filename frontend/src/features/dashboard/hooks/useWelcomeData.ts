@@ -28,7 +28,7 @@ export const useWelcomeData = () => {
         const storedCompletion = 85;
 
         setWelcomeData({
-          fullName: username, // Use username from useUsername hook
+          fullName: username ?? 'User', // Ensure fullName is always a string
           streak: storedStreak,
           activeGoals: storedGoals,
           completionRate: storedCompletion

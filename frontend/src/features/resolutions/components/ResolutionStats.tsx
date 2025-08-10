@@ -1,4 +1,3 @@
-import React from 'react';
 import { Target, TrendingUp, Eye, Award } from 'lucide-react';
 import type { Resolution } from '../types/resolutions.types';
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import resolutionService from '../../../api/resolutionService';
-import type { Resolution, ResolutionLog } from '../types/resolutions.types';
+import type { Resolution } from '../types/resolutions.types';
 
 export function useResolutions() {
   const [goals, setGoals] = useState<Resolution[]>([]);
