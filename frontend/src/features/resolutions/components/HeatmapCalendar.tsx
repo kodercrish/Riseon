@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Target, Plus } from 'lucide-react';
 import type { ResolutionLog } from '../types/resolutions.types';
 import TodayLogModal from './TodayLogModal';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Star, Calendar } from 'lucide-react';
 import type { ResolutionLog } from '../types/resolutions.types';
 
@@ -10,7 +9,7 @@ interface TodayProgressCardProps {
 
 export default function TodayProgressCard({ 
   todayLog, 
-  resolutionTitle, 
+  // resolutionTitle, 
   onAddProgress 
 }: TodayProgressCardProps) {
   const today = new Date().toLocaleDateString('en-US', { 
