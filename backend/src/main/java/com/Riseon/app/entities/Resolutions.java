@@ -28,7 +28,7 @@ public class Resolutions {
     @JoinColumn(name = "user_Id", referencedColumnName = "user_Id", nullable = false)
     private Users user;
     
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String title;
 
     @Lob
