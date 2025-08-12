@@ -56,7 +56,7 @@ public class JwtCookieUtil {
             .httpOnly(true)
             .secure(true)
             .path("/")
-            .sameSite("Strict")
+            .sameSite("None")
             .maxAge(60 * 60) // 1 hour
             .build();
 
